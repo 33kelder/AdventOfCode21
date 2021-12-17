@@ -13,14 +13,19 @@ let allInput = File.ReadLines(@"Day5\\Day5Input.txt")
 let filteredInput = 
     allInput
     |> Seq.map getLine
-    |> Seq.filter (fun line -> line.X1 = line.X2 || line.Y1 = line.Y2)
     |> Seq.map (fun line -> 
             match line with
             | line when line.X1 = line.X2 && line.Y1 <= line.Y2 -> [| for i in line.Y1 .. line.Y2 -> (line.X1, i)|]
             | line when line.X1 = line.X2 && line.Y1 > line.Y2 -> [| for i in line.Y2 .. line.Y1 -> (line.X1, i)|]
             | line when line.Y1 = line.Y2 && line.X1 <= line.X2 -> [| for i in line.X1 .. line.X2 -> (i, line.Y1)|]
             | line when line.Y1 = line.Y2 && line.X1 > line.X2 -> [| for i in line.X2 .. line.X1 -> (i, line.Y1)|]
-            | _ -> Array.empty
+            | line -> 
+                let xMin = min line.X1 line.X2
+                let xMax = max line.X1 line.X2
+                let iMax = xMax - xMin
+                let xPlusOrMin = fun x1 x2 -> if (line.X1 < line.X2) then x1 + x2 else x1 - x2
+                let yPlusOrMin = fun y1 y2 -> if (line.Y1 < line.Y2) then y1 + y2 else y1 - y2
+                [|for i in 0 .. iMax -> (xPlusOrMin line.X1 i, yPlusOrMin line.Y1 i)|]
         )
     |> Seq.reduce Array.append
     |> Seq.groupBy (fun c -> c)
