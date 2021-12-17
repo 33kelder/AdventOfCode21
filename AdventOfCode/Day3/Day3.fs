@@ -3,32 +3,44 @@
 open System.IO
 open System
 
-let parseString (str:string) = 
+let parseBits (str:string) = 
     str
     |> Seq.toArray 
     |> Array.map string
     |> Array.map int
-    |> Array.append [|1|]
 
 let inline (++) a b = Array.map2 (+) a b
 
 let allDiagnostics = 
     File.ReadLines(@"Day3\\Day3Input.txt")
-    |> Seq.map parseString
-    |> Seq.reduce (fun acc arr -> acc ++ arr)
+    |> Seq.map parseBits
+    |> Seq.toList
 
-let nrOfDiagnostics = Array.head allDiagnostics
-let summDiagnostics = Array.tail allDiagnostics
+let getOxygenRateAtIndex (summDiagnostics:int[]) index nrOfDiagnostics  =
+    if (((double summDiagnostics[index]) / (double nrOfDiagnostics)) >= 0.5) then 1 else 0
+let getCO2RateAtIndex (summDiagnostics:int[]) index nrOfDiagnostics  =
+    if (((double summDiagnostics[index]) / (double nrOfDiagnostics)) >= 0.5) then 0 else 1
+let getDecimal (ints:int[]) = 
+    let string = String.Join("", ints)
+    Convert.ToInt64(string,2);
 
-let isGammaRate nr i  = if (((double i) / (double nr)) > 0.5) then 1 else 0
-let gammaRateArray = 
-    summDiagnostics
-    |> Array.map (isGammaRate nrOfDiagnostics)
-let gammaRateString = String.Join("", gammaRateArray)
-let gammaRateDecimal = Convert.ToInt64(gammaRateString,2);
-let epsilonRateArray = gammaRateArray |> Array.map (fun i -> if (i = 0) then 1 else 0)
-let epsilonRateString = String.Join("", epsilonRateArray)
-let epsilonRateDecimal = Convert.ToInt64(epsilonRateString,2);
+let rec findGeneratorRating getRateAtIndex (diagnostics:int[] list) (index:int) =
+    let summDiagnostics = diagnostics |> List.reduce (fun acc arr -> acc ++ arr)
+    let nrOfDiagnostics = diagnostics.Length
+    let oxygenRateAtIndex = getRateAtIndex summDiagnostics index nrOfDiagnostics
+    let filteredDiagnostics = 
+        diagnostics
+        |> List.filter (fun d -> d[index] = oxygenRateAtIndex)
+    if (filteredDiagnostics.Length > 1)
+    then
+        findGeneratorRating getRateAtIndex filteredDiagnostics (index + 1)
+    else
+        filteredDiagnostics[0]
 
-let answer = gammaRateDecimal * epsilonRateDecimal
-
+let oxygenGeneratorRatingDecimal = 
+    findGeneratorRating getOxygenRateAtIndex allDiagnostics 0 
+    |> getDecimal
+let co2GeneratorRatingDecimal = 
+    findGeneratorRating getCO2RateAtIndex allDiagnostics 0 
+    |> getDecimal
+let answer = oxygenGeneratorRatingDecimal * co2GeneratorRatingDecimal
