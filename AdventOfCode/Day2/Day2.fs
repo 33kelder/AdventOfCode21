@@ -17,12 +17,8 @@ type Direction =
 
 type Velocity = {
     Direction:Direction
-    Speed: int
+    X: int
 }
-
-let splitIn2 (str:string) =
-    let words = str.Split(" ")
-    (words[0], words[1])
 
 let parseDirection str =
     match str with
@@ -31,34 +27,26 @@ let parseDirection str =
     | "up" -> Direction.Up
     | _ -> Direction.Unknown
 
-let parseVelocity (directionString:string, speedString:string) =
-    let direction = parseDirection directionString
-    let speed = speedString |> int
-    { 
-        Velocity.Direction = direction; 
-        Speed = speed
-    }
+let parseInstruction (line:string) =
+    let strings = line.Split(" ")
+    let direction = parseDirection strings[0]
+    let x = strings[1] |> int
+    { Velocity.Direction = direction; X = x }
 
-let readLines (filePath:string) = seq {
-    use sr = new StreamReader (filePath)
-    while not sr.EndOfStream do
-        yield sr.ReadLine ()
-}
-let allVelocities = 
-    File.ReadAllLines(@"Day2Input.txt")
-    |> Array.toList
-    |> List.map splitIn2
-    |> List.map parseVelocity
+let allInstructions = 
+    File.ReadLines(@"Day2\\Day2Input.txt")
+    |> Seq.toList
+    |> List.map parseInstruction
 
-let rec procesVelocities velocities horizontalPosition depth =
-    match velocities with 
-    | h1::t1 ->
-        match h1.Direction with
-        | Direction.Forward -> procesVelocities t1 (horizontalPosition + h1.Speed) depth
-        | Direction.Down -> procesVelocities t1 horizontalPosition (depth + h1.Speed)
-        | Direction.Up -> procesVelocities t1 horizontalPosition (depth - h1.Speed)
-        | _ -> procesVelocities t1 horizontalPosition depth
+let rec procesInstructions instructions horizontalPosition depth aim =
+    match instructions with 
+    | instruction::restInstructions ->
+        match instruction.Direction with
+        | Direction.Down -> procesInstructions restInstructions horizontalPosition depth (aim + instruction.X)
+        | Direction.Up -> procesInstructions restInstructions horizontalPosition depth (aim - instruction.X)
+        | Direction.Forward -> procesInstructions restInstructions (horizontalPosition + instruction.X) (depth + aim * instruction.X) aim
+        | _ -> procesInstructions restInstructions horizontalPosition depth aim
     | _ -> horizontalPosition * depth
 
-let answer = procesVelocities allVelocities 0 0
+let answer = procesInstructions allInstructions 0 0 0
 
