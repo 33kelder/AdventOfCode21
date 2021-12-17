@@ -4,4 +4,4 @@
 
 
 // For more information see https://aka.ms/fsharp-console-apps
-Console.WriteLine("An answer: {0}", Day5.answer)
+Console.WriteLine("An answer: {0}", Day6.answer)

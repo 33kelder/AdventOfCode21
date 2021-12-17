@@ -3,20 +3,24 @@
 open System.IO
 
 let allNumbers = 
-    File.ReadAllLines(@"Day1Input.txt")
-    |> Array.map int
-    |> Array.toList
+    File.ReadLines(@"Day1\\Day1Input.txt")
+    |> Seq.map int
+    |> Seq.toList
 
-let (startNumber, numbers) = 
-    match allNumbers with
-    | h1::tl -> (h1, tl)
-    | _ -> (0, allNumbers)
+let firstNumber = allNumbers[0]
+let numbers = allNumbers |> List.skip 1
 
-let rec countIncrease lst prev count =
-    match lst with
-    | h1::tl when h1 <= prev -> countIncrease tl h1 count
-    | h1::tl when h1 > prev -> countIncrease tl h1 (count + 1)
-    | _ -> count
-
-let answer = countIncrease numbers startNumber 0
+let rec countIncrease lst prev1 count =
+    if (List.length lst) > 2 
+    then
+        let prevMeasurement = prev1 + lst[0] + lst[1]
+        let nextMeasurement = lst[0] + lst[1] + lst[2]
+        if prevMeasurement < nextMeasurement
+        then 
+            countIncrease lst.Tail lst[0] (count + 1)
+        else
+            countIncrease lst.Tail lst[0] count
+    else  
+        count
+let answer = countIncrease numbers firstNumber 0
 

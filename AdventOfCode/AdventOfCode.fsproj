@@ -6,12 +6,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="Day1\\Day1Input.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Day1\\Day1InputSample.txt">
+	<EmbeddedResource Include="Day1\\Day1Input.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </EmbeddedResource>
+	<EmbeddedResource Include="Day1\\Day1InputSample.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
     <Compile Include="Day1\\Day1.fs" />
     <EmbeddedResource Include="Day2\\Day2Input.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -41,6 +41,13 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <Compile Include="Day5\\Day5.fs"/>
+    <EmbeddedResource Include="Day6\\Day6Input.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Day6\\Day6InputSample.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <Compile Include="Day6\\Day6.fs"/>
     <Compile Include="Program.fs" />
   </ItemGroup>
 
