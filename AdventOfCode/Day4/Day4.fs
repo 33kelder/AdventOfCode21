@@ -56,7 +56,6 @@ type Board(N: int, nrs: int[][]) =
             sumAllUnMatchNumbers * bingoNr
         | _ -> 0
 
-
 let boardSize = 5
 let allInput = File.ReadAllLines(@"Day4\\Day4Input.txt")
 let numbersDrawn = allInput[0].Split(",") |> Array.map int |> Array.toList
@@ -81,23 +80,25 @@ let boards =
     |> Array.map getRows
     |> Array.map getBoard
 
-let rec DrawNumbers (boards:Board[]) (numbersDrawn:int list) =
+let rec findLastBoard (boards:Board[]) (numbersDrawn:int list) =
     match numbersDrawn with
-    |head::tail -> 
-        let mutable bingoBoard = None
+    |nr::restNrs -> 
+        let mutable indexBingoBoard = None
         for i in 0..boards.Length - 1 do
             let b = boards[i]
-            if (b.DrawNumber head)
-            then bingoBoard <- Some b
-        match bingoBoard with
-        | Some board -> Some board
-        | _ -> DrawNumbers boards tail
-    | [] -> None
+            if (b.DrawNumber nr)
+            then indexBingoBoard <- Some i
+        match indexBingoBoard with
+        | Some index -> 
+            if (boards.Length > 1)
+            then
+                let remainingBoards = boards |> Array.removeAt index
+                findLastBoard remainingBoards numbersDrawn
+            else boards
+        | _ -> findLastBoard boards restNrs
+    | [] -> Array.empty
 
-let bingoBoard = DrawNumbers boards numbersDrawn
+let lastBingoBoard = (findLastBoard boards numbersDrawn)[0]
 
-let answer = 
-    match bingoBoard with
-    | Some board -> board.GetBingoNumber()
-    | None -> 0
+let answer = lastBingoBoard.GetBingoNumber()
 
