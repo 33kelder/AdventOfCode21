@@ -48,6 +48,13 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <Compile Include="Day6\\Day6.fs"/>
+    <EmbeddedResource Include="Day7\\Day7Input.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Day7\\Day7InputSample.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <Compile Include="Day7\\Day7.fs"/>
     <Compile Include="Program.fs" />
   </ItemGroup>
 
